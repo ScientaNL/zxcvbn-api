@@ -11,7 +11,7 @@ pipeline:
   build-branch:
     image: plugins/docker
     repo: scienta/zxcvbn-i18n-api
-    dockerfile: ./Dockerfile
+    dockerfile: ./dockerfile
     context: ./
     auto_tag: false
     tags: "branch-${DRONE_BRANCH}"
@@ -25,7 +25,7 @@ pipeline:
   build-tag:
     image: plugins/docker
     repo: scienta/zxcvbn-i18n-api
-    dockerfile: ./Dockerfile
+    dockerfile: ./dockerfile
     context: ./
     auto_tag: false
     tags: "${DRONE_TAG}"
