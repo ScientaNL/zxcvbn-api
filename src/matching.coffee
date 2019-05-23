@@ -1,4 +1,7 @@
-frequency_lists = require('./frequency_lists')
+frequency_lists_en = require('./frequency_lists_en')
+frequency_lists_nl = require('./frequency_lists_nl')
+frequency_lists_fr = require('./frequency_lists_fr')
+
 adjacency_graphs = require('./adjacency_graphs')
 scoring = require('./scoring')
 
@@ -10,9 +13,19 @@ build_ranked_dict = (ordered_list) ->
     i += 1
   result
 
-RANKED_DICTIONARIES = {}
-for name, lst of frequency_lists
-  RANKED_DICTIONARIES[name] = build_ranked_dict lst
+RANKED_DICTIONARIES_EN = {}
+for name, lst of frequency_lists_en
+  RANKED_DICTIONARIES_EN[name] = build_ranked_dict lst
+
+RANKED_DICTIONARIES_NL = {}
+for name, lst of frequency_lists_nl
+  RANKED_DICTIONARIES_NL[name] = build_ranked_dict lst
+
+RANKED_DICTIONARIES_FR = {}
+for name, lst of frequency_lists_fr
+  RANKED_DICTIONARIES_FR[name] = build_ranked_dict lst
+
+DICTS = {en:RANKED_DICTIONARIES_EN, nl:RANKED_DICTIONARIES_NL, fr:RANKED_DICTIONARIES_FR};
 
 GRAPHS =
   qwerty:     adjacency_graphs.qwerty
@@ -78,27 +91,38 @@ matching =
   # omnimatch -- combine everything ----------------------------------------------
   # ------------------------------------------------------------------------------
 
-  omnimatch: (password) ->
+  omnimatch: (password, language) ->
+
     matches = []
-    matchers = [
+
+    dict_matchers = [
       @dictionary_match
       @reverse_dictionary_match
       @l33t_match
+    ]
+
+    other_matchers = [
       @spatial_match
       @repeat_match
       @sequence_match
       @regex_match
       @date_match
     ]
-    for matcher in matchers
+
+    for matcher in dict_matchers
+      @extend matches, matcher.call(this, password, DICTS[language])
+
+    for matcher in other_matchers
       @extend matches, matcher.call(this, password)
+
+
     @sorted matches
 
   #-------------------------------------------------------------------------------
   # dictionary match (common passwords, english, last names, etc) ----------------
   #-------------------------------------------------------------------------------
 
-  dictionary_match: (password, _ranked_dictionaries = RANKED_DICTIONARIES) ->
+  dictionary_match: (password, _ranked_dictionaries = RANKED_DICTIONARIES_EN) ->
     # _ranked_dictionaries variable is for unit testing purposes
     matches = []
     len = password.length
@@ -121,7 +145,7 @@ matching =
               l33t: false
     @sorted matches
 
-  reverse_dictionary_match: (password, _ranked_dictionaries = RANKED_DICTIONARIES) ->
+  reverse_dictionary_match: (password, _ranked_dictionaries = RANKED_DICTIONARIES_EN) ->
     reversed_password = password.split('').reverse().join('')
     matches = @dictionary_match reversed_password, _ranked_dictionaries
     for match in matches
@@ -134,8 +158,8 @@ matching =
       ]
     @sorted matches
 
-  set_user_input_dictionary: (ordered_list) ->
-    RANKED_DICTIONARIES['user_inputs'] = build_ranked_dict ordered_list.slice()
+  set_user_input_dictionary: (ordered_list, _ranked_dictionaries = RANKED_DICTIONARIES_EN) ->
+    _ranked_dictionaries['user_inputs'] = build_ranked_dict ordered_list.slice()
 
   #-------------------------------------------------------------------------------
   # dictionary match with common l33t substitutions ------------------------------
@@ -203,7 +227,7 @@ matching =
       sub_dicts.push sub_dict
     sub_dicts
 
-  l33t_match: (password, _ranked_dictionaries = RANKED_DICTIONARIES, _l33t_table = L33T_TABLE) ->
+  l33t_match: (password, _ranked_dictionaries = RANKED_DICTIONARIES_EN, _l33t_table = L33T_TABLE) ->
     matches = []
     for sub in @enumerate_l33t_subs @relevant_l33t_subtable(password, _l33t_table)
       break if @empty sub # corner case: password has no relevant subs.

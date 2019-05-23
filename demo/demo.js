@@ -1,5 +1,11 @@
+/*
+ * decaffeinate suggestions:
+ * DS101: Remove unnecessary use of Array.from
+ * DS102: Remove unnecessary code created because of implicit returns
+ * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
+ */
 
-test_passwords = '''
+const test_passwords = `\
 zxcvbn
 qwER43@!
 Tr0ub4dour&3
@@ -78,10 +84,10 @@ verlineVANDERMARK
 
 eheuczkqyq
 rWibMFACxAUGZmxhVncy
-Ba9ZyWABu99[BK#6MBgbH88Tofv)vs$w
-'''
+Ba9ZyWABu99[BK#6MBgbH88Tofv)vs$w\
+`;
 
-results_tmpl = '''
+const results_tmpl = `\
 {{#results}}
 <table class="result">
   <tr>
@@ -109,32 +115,32 @@ results_tmpl = '''
   </tr>
 </table>
 {{& sequence_display}}
-{{/results}}
-'''
+{{/results}}\
+`;
 
-guess_times_tmpl = '''
-  <tr>
-    <td>100 / hour:</td>
-    <td>{{online_throttling_100_per_hour}}</td>
-    <td> (throttled online attack)</td>
-  </tr>
-  <tr>
-    <td>10&nbsp; / second:</td>
-    <td>{{online_no_throttling_10_per_second}}</td>
-    <td> (unthrottled online attack)</td>
-  </tr>
-  <tr>
-    <td>10k / second:</td>
-    <td>{{offline_slow_hashing_1e4_per_second}}</td>
-    <td> (offline attack, slow hash, many cores)</td>
-  <tr>
-    <td>10B / second:</td>
-    <td>{{offline_fast_hashing_1e10_per_second}}</td>
-    <td> (offline attack, fast hash, many cores)</td>
-  </tr>
-'''
+const guess_times_tmpl = `\
+<tr>
+  <td>100 / hour:</td>
+  <td>{{online_throttling_100_per_hour}}</td>
+  <td> (throttled online attack)</td>
+</tr>
+<tr>
+  <td>10&nbsp; / second:</td>
+  <td>{{online_no_throttling_10_per_second}}</td>
+  <td> (unthrottled online attack)</td>
+</tr>
+<tr>
+  <td>10k / second:</td>
+  <td>{{offline_slow_hashing_1e4_per_second}}</td>
+  <td> (offline attack, slow hash, many cores)</td>
+<tr>
+  <td>10B / second:</td>
+  <td>{{offline_fast_hashing_1e10_per_second}}</td>
+  <td> (offline attack, fast hash, many cores)</td>
+</tr>\
+`;
 
-feedback_tmpl = '''
+const feedback_tmpl = `\
 {{#warning}}
 <tr>
   <td>warning: </td>
@@ -150,10 +156,10 @@ feedback_tmpl = '''
     {{/suggestions}}
   </td>
 </tr>
-{{/has_suggestions}}
-'''
+{{/has_suggestions}}\
+`;
 
-props_tmpl = '''
+const props_tmpl = `\
 <div class="match-sequence">
 {{#sequence}}
 <table>
@@ -282,51 +288,60 @@ props_tmpl = '''
   {{/day}}
 </table>
 {{/sequence}}
-</div>
-'''
+</div>\
+`;
 
-round_to_x_digits = (n, x) ->
-  Math.round(n * Math.pow(10, x)) / Math.pow(10, x)
+const round_to_x_digits = (n, x) => Math.round(n * Math.pow(10, x)) / Math.pow(10, x);
 
-round_logs = (r) ->
-  r.guesses_log10 = round_to_x_digits(r.guesses_log10, 5)
-  for m in r.sequence
-    m.guesses_log10 = round_to_x_digits(m.guesses_log10, 5)
+const round_logs = function(r) {
+  r.guesses_log10 = round_to_x_digits(r.guesses_log10, 5);
+  return Array.from(r.sequence).map((m) =>
+    (m.guesses_log10 = round_to_x_digits(m.guesses_log10, 5)));
+};
 
-requirejs ['../dist/zxcvbn'], (zxcvbn) ->
-  $ ->
-    window.zxcvbn = zxcvbn
-    results_lst = []
-    for password in test_passwords.split('\n') when password
-      r = zxcvbn(password,'fr')
-      round_logs(r)
-      r.sequence_display = Mustache.render(props_tmpl, r)
-      r.guess_times_display = Mustache.render(guess_times_tmpl, r.crack_times_display)
-      r.feedback.has_suggestions = r.feedback.suggestions.length > 0
-      r.feedback_display = Mustache.render(feedback_tmpl, r.feedback)
-      results_lst.push r
+requirejs(['../dist/zxcvbn'], zxcvbn =>
+  $(function() {
+    let r;
+    window.zxcvbn = zxcvbn;
+    const results_lst = [];
+    for (let password of Array.from(test_passwords.split('\n'))) {
+      if (password) {
+        r = zxcvbn(password, [], 'en');
+        round_logs(r);
+        r.sequence_display = Mustache.render(props_tmpl, r);
+        r.guess_times_display = Mustache.render(guess_times_tmpl, r.crack_times_display);
+        r.feedback.has_suggestions = r.feedback.suggestions.length > 0;
+        r.feedback_display = Mustache.render(feedback_tmpl, r.feedback);
+        results_lst.push(r);
+      }
+    }
 
-    rendered = Mustache.render(results_tmpl, {
+    let rendered = Mustache.render(results_tmpl, {
       results: results_lst,
-    })
-    $('#results').html(rendered)
+    });
+    $('#results').html(rendered);
 
-    last_q = ''
-    _listener = ->
-      current = $('#search-bar').val()
-      unless current
-        $('#search-results').html('')
-        return
-      if current != last_q
-        last_q = current
-        r = zxcvbn(current)
-        round_logs(r)
-        r.sequence_display = Mustache.render(props_tmpl, r)
-        r.guess_times_display = Mustache.render(guess_times_tmpl, r.crack_times_display)
-        r.feedback.has_suggestions = r.feedback.suggestions.length > 0
-        r.feedback_display = Mustache.render(feedback_tmpl, r.feedback)
-        results = {results: [r]}
-        rendered = Mustache.render(results_tmpl, results)
-        $('#search-results').html(rendered)
+    let last_q = '';
+    const _listener = function() {
+      const current = $('#search-bar').val();
+      if (!current) {
+        $('#search-results').html('');
+        return;
+      }
+      if (current !== last_q) {
+        last_q = current;
+        r = zxcvbn(current, [], 'en');
+        round_logs(r);
+        r.sequence_display = Mustache.render(props_tmpl, r);
+        r.guess_times_display = Mustache.render(guess_times_tmpl, r.crack_times_display);
+        r.feedback.has_suggestions = r.feedback.suggestions.length > 0;
+        r.feedback_display = Mustache.render(feedback_tmpl, r.feedback);
+        const results = {results: [r]};
+        rendered = Mustache.render(results_tmpl, results);
+        return $('#search-results').html(rendered);
+      }
+    };
 
-    setInterval _listener, 100
+    return setInterval(_listener, 100);
+  })
+);

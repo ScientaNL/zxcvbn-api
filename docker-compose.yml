@@ -1,0 +1,11 @@
+version: '3.2'
+services:
+
+  zxcvbn-i18n-api:
+    container_name: zxcvbn-i18n-api
+    build: .
+    ports:
+      - "3000:3000"
+    volumes:
+      - .:/usr/src/app
+
