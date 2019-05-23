@@ -150,7 +150,7 @@ run `docker-compose up -d` to start the container on `localhost:3000`
 
 ---
 
-###Improvements:
+### Improvements:
 
 - All the langauges are included at the moment since there are only 3, when needed, it should use dynamic loading of the datasets.
 - Better error handling
