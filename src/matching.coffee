@@ -1,6 +1,7 @@
 frequency_lists_en = require('./frequency_lists_en')
 frequency_lists_nl = require('./frequency_lists_nl')
 frequency_lists_fr = require('./frequency_lists_fr')
+frequency_lists_de = require('./frequency_lists_de')
 
 adjacency_graphs = require('./adjacency_graphs')
 scoring = require('./scoring')
@@ -25,7 +26,11 @@ RANKED_DICTIONARIES_FR = {}
 for name, lst of frequency_lists_fr
   RANKED_DICTIONARIES_FR[name] = build_ranked_dict lst
 
-DICTS = {en:RANKED_DICTIONARIES_EN, nl:RANKED_DICTIONARIES_NL, fr:RANKED_DICTIONARIES_FR};
+RANKED_DICTIONARIES_DE = {}
+for name, lst of frequency_lists_de
+  RANKED_DICTIONARIES_DE[name] = build_ranked_dict lst
+
+DICTS = {en:RANKED_DICTIONARIES_EN, nl:RANKED_DICTIONARIES_NL, fr:RANKED_DICTIONARIES_FR, de:RANKED_DICTIONARIES_DE};
 
 GRAPHS =
   qwerty:     adjacency_graphs.qwerty

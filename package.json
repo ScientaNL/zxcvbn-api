@@ -7,7 +7,7 @@
   "repository": "scienta/zxcvbn-i18n-api",
   "scripts": {
     "test": "coffeetape test/*.coffee | faucet",
-    "build": "npm run build-lib ; npm run build-dist",
+    "build": "npm run build-lib && npm run build-dist",
     "build-lib": "coffee -o src --compile --bare src/*.coffee",
     "build-dist": "browserify -g --debug  --standalone zxcvbn -g coffeeify src/main.coffee >| dist/zxcvbn.js",
     "start": "node server.js"
