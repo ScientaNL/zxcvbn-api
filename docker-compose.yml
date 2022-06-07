@@ -5,7 +5,7 @@ services:
     container_name: zxcvbn-i18n-api
     build: .
     ports:
-      - "3000:3000"
-#    volumes:                   Enable for development
-#      - .:/usr/src/app
+      - "5771:3000"
+    volumes:
+      - .:/usr/src/app
 

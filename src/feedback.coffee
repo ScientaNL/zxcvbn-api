@@ -1,16 +1,16 @@
 scoring = require('./scoring')
 
+password_manager_hint = "We advise to use a unique password for each website or app. Use a password manager to keep track of all your password.";
+default_hint = "Use a few words, avoid common phrases, there is no need for symbols, digits, or uppercase letters.";
+
 feedback =
   default_feedback:
     warning: ''
-    suggestions: [
-      "Use a few words, avoid common phrases"
-      "No need for symbols, digits, or uppercase letters"
-    ]
+    suggestions: [password_manager_hint, default_hint]
 
   get_feedback: (score, sequence) ->
     # starting feedback
-    return @default_feedback if sequence.length == 0
+    return @default_feedback if !sequence || sequence.length == 0
 
     # no feedback if score is good or great.
     return if score > 2
@@ -25,11 +25,12 @@ feedback =
     extra_feedback = 'Add another word or two. Uncommon words are better.'
     if feedback?
       feedback.suggestions.unshift extra_feedback
+      feedback.suggestions.push password_manager_hint
       feedback.warning = '' unless feedback.warning?
     else
       feedback =
         warning: ''
-        suggestions: [extra_feedback]
+        suggestions: [extra_feedback, password_manager_hint]
     feedback
 
   get_match_feedback: (match, is_sole_match) ->

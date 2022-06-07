@@ -160,11 +160,13 @@ run `docker-compose up -d` to start the container on `localhost:3000`
 
 ### Acknowledgments
 
+[zxcvbn-nl](https://github.com/pepve/zxcvbn-nl) for the dutch language support
+
 [Dropbox](https://dropbox.com) for supporting open source!
 
 Mark Burnett for releasing his 10M password corpus and for his 2005 book, [Perfect Passwords: Selection, Protection, Authentication](http://www.amazon.com/Perfect-Passwords-Selection-Protection-Authentication/dp/1597490415).
 
-Wiktionary contributors for building a [frequency list of English words](http://en.wiktionary.org/wiki/Wiktionary:Frequency_lists) as used in television and movies.
+Wiktionary contributors for building a [frequency list](http://en.wiktionary.org/wiki/Wiktionary:Frequency_lists) as used in wikipedia, television and movies and more.
 
 Researchers at Concordia University for [studying password estimation rigorously](http://www.concordia.ca/cunews/main/stories/2015/03/25/does-your-password-pass-muster.html) and recommending zxcvbn.
 
