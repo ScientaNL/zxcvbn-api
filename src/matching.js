@@ -196,10 +196,9 @@ matching = {
     }
     return this.sorted(matches);
   },
-  set_user_input_dictionary: function(ordered_list, _ranked_dictionaries) {
-    if (_ranked_dictionaries == null) {
-      _ranked_dictionaries = RANKED_DICTIONARIES_EN;
-    }
+  set_user_input_dictionary: function(ordered_list, language) {
+    var _ranked_dictionaries;
+    _ranked_dictionaries = DICTS[language];
     return _ranked_dictionaries['user_inputs'] = build_ranked_dict(ordered_list.slice());
   },
   relevant_l33t_subtable: function(password, table) {

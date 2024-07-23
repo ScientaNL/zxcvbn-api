@@ -19,6 +19,10 @@ zxcvbn = function(password, user_inputs, language) {
     user_inputs = [];
   }
   start = time();
+  if (!['en', 'nl', 'fr', 'de'].includes(language)) {
+    console.warn("Unsupported language: " + language + ". Falling back to english");
+    language = "en";
+  }
   sanitized_inputs = [];
   for (i = 0, len = user_inputs.length; i < len; i++) {
     arg = user_inputs[i];
@@ -26,7 +30,7 @@ zxcvbn = function(password, user_inputs, language) {
       sanitized_inputs.push(arg.toString().toLowerCase());
     }
   }
-  matching.set_user_input_dictionary(sanitized_inputs);
+  matching.set_user_input_dictionary(sanitized_inputs, language);
   matches = matching.omnimatch(password, language);
   result = scoring.most_guessable_match_sequence(password, matches);
   result.calc_time = time() - start;
