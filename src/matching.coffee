@@ -163,7 +163,8 @@ matching =
       ]
     @sorted matches
 
-  set_user_input_dictionary: (ordered_list, _ranked_dictionaries = RANKED_DICTIONARIES_EN) ->
+  set_user_input_dictionary: (ordered_list, language) ->
+    _ranked_dictionaries = DICTS[language]
     _ranked_dictionaries['user_inputs'] = build_ranked_dict ordered_list.slice()
 
   #-------------------------------------------------------------------------------
